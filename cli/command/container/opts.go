@@ -324,6 +324,11 @@ func parse(flags *pflag.FlagSet, copts *containerOptions, serverOS string) (*con
 		attachStderr = copts.attach.Get("stderr")
 	)
 
+	// 这里等于0说明是root账号执行的命令，如果普通账号执行的命令就强制加上 --user 选项
+	if os.Getuid() != 0 {
+		copts.user = fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()) // "1000:1000"
+	}
+
 	// Validate the input mac address
 	if copts.macAddress != "" {
 		if _, err := opts.ValidateMACAddress(copts.macAddress); err != nil {
