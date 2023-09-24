@@ -242,6 +242,11 @@ func parseExec(execOpts ExecOptions, configFile *configfile.ConfigFile) (*types.
 		WorkingDir: execOpts.Workdir,
 	}
 
+	// 这里等于0说明是root账号执行的命令，如果普通账号执行的命令就强制加上 --user 选项
+	if os.Getuid() != 0 {
+		execConfig.User = fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()) // "1000:1000"
+	}
+
 	// collect all the environment variables for the container
 	var err error
 	if execConfig.Env, err = opts.ReadKVEnvStrings(execOpts.EnvFile.GetAll(), execOpts.Env.GetAll()); err != nil {
