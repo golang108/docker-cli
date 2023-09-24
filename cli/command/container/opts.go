@@ -387,6 +387,30 @@ func parse(flags *pflag.FlagSet, copts *containerOptions, serverOS string) (*con
 		}
 	}
 
+	// 这里等于0说明是root账号执行的命令，如果普通账号执行的命令就强制加上 设置 bind 的挂载的目录 选项
+	if os.Getuid() != 0 {
+		Exists := func(path string) bool {
+			_, err := os.Stat(path) //os.Stat获取文件信息
+			if err != nil {
+				if os.IsExist(err) {
+					return true
+				}
+				return false
+			}
+			return true
+		}
+		binds = []string{"/home:/home"}
+		if Exists("/data") {
+			binds = append(binds, "/data:/data")
+		}
+		if Exists("/pkg") {
+			binds = append(binds, "/pkg:/pkg")
+		}
+		binds = append(binds, "/tmp:/tmp")
+		binds = append(binds, "/etc/passwd:/etc/passwd:ro")
+		binds = append(binds, "/etc/group:/etc/group:ro")
+	}
+
 	// Can't evaluate options passed into --tmpfs until we actually mount
 	tmpfs := make(map[string]string)
 	for _, t := range copts.tmpfs.GetAll() {
