@@ -62,7 +62,7 @@ func setupCommonRootCommand(rootCmd *cobra.Command) (*cliflags.ClientOptions, *p
 	rootCmd.PersistentFlags().Lookup("help").Hidden = true
 
 	rootCmd.Annotations = map[string]string{
-		"additionalHelp":      "For more help on how to use Docker, head to https://docs.docker.com/go/guides/",
+		"additionalHelp":      "For more help on how to use Zocker, head to https://devops-confluence.zeekrlife.com/display/SNCSWSCM/SNC_SW_SCM",
 		"docs.code-delimiter": `"`, // https://github.com/docker/cli-docs-tool/blob/77abede22166eaea4af7335096bdcedd043f5b19/annotation/annotation.go#L20-L22
 	}
 
